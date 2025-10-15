@@ -12,6 +12,53 @@ export function extractMarketSummary(content: string): string | null {
       content.substring(0, 200) + "..."
     );
 
+    // Check if the content is a simple JSON response without market analysis
+    try {
+      const parsed = JSON.parse(content);
+      if (parsed.answer && typeof parsed.answer === "string") {
+        // This is a simple API response, check if the answer contains market analysis
+        const answer = parsed.answer;
+
+        // Check for simple greeting or help responses that should not be treated as market summaries
+        const isSimpleResponse =
+          answer.includes("Hello!") ||
+          answer.includes("How can I assist") ||
+          answer.includes("How can I help") ||
+          answer.includes("feel free to ask") ||
+          answer.includes("let me know") ||
+          answer.includes("I'm here to help") ||
+          answer.includes("anything else you'd like") ||
+          answer.includes("questions about") ||
+          answer.includes("free to ask");
+
+        // If the answer is just a simple response without market analysis, return null
+        if (
+          isSimpleResponse ||
+          (!answer.includes("Market Trend Summary") &&
+            !answer.includes("Summary") &&
+            !answer.includes("market analysis") &&
+            !answer.includes("historical trend") &&
+            !answer.includes("forecast") &&
+            !answer.includes("insights") &&
+            !answer.includes("recommendations") &&
+            !answer.includes("data analysis") &&
+            !answer.includes("market trends") &&
+            !answer.includes("market data") &&
+            answer.length < 300)
+        ) {
+          console.log(
+            "Simple response without market analysis, returning null"
+          );
+          return null;
+        }
+
+        // If it contains market analysis, process the answer content
+        content = answer;
+      }
+    } catch (jsonError) {
+      // Not a JSON response, continue with normal processing
+    }
+
     // First, look for Market Trend Summary section specifically
     const marketTrendSummaryMatch = content.match(
       /\*\*Market Trend Summary:\*\*\s*([\s\S]*?)(?=\*\*|$)/i

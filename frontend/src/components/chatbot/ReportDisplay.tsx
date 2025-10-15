@@ -57,10 +57,67 @@ function extractMarketTrendSummary(content: string): string | null {
 export function ReportDisplay({ summary, className = "" }: ReportDisplayProps) {
   const { t } = useClientI18n();
 
+  // Validate that summary is a proper market summary, not plain text or JSON
+  const isValidMarketSummary = (
+    content: string | null | undefined
+  ): boolean => {
+    if (!content || typeof content !== "string") return false;
+
+    // Check if it's a JSON response (which shouldn't be displayed as summary)
+    try {
+      const parsed = JSON.parse(content);
+      if (parsed.answer || parsed.message_id || parsed.status) {
+        return false; // This is a JSON response, not a market summary
+      }
+    } catch {
+      // Not JSON, continue validation
+    }
+
+    // Check for simple greeting or help responses that should not be treated as market summaries
+    const isSimpleResponse =
+      content.includes("Hello!") ||
+      content.includes("How can I assist") ||
+      content.includes("How can I help") ||
+      content.includes("feel free to ask") ||
+      content.includes("let me know") ||
+      content.includes("I'm here to help") ||
+      content.includes("anything else you'd like") ||
+      content.includes("questions about") ||
+      content.includes("free to ask");
+
+    if (isSimpleResponse) {
+      return false;
+    }
+
+    // Check if it contains market analysis keywords
+    const hasMarketKeywords =
+      content.includes("Market Trend Summary") ||
+      content.includes("Summary") ||
+      content.includes("market analysis") ||
+      content.includes("historical trend") ||
+      content.includes("forecast") ||
+      content.includes("insights") ||
+      content.includes("recommendations") ||
+      content.includes("data analysis") ||
+      content.includes("market trends") ||
+      content.includes("market data");
+
+    // Must be substantial content (more than just a simple response)
+    const isSubstantial = content.length > 200;
+
+    return hasMarketKeywords && isSubstantial;
+  };
+
   const extractedSummary =
     summary ||
     (typeof summary === "string" ? extractMarketTrendSummary(summary) : null);
-  const displaySummary = summary || extractedSummary;
+
+  // Only use the summary if it's a valid market summary
+  const displaySummary = isValidMarketSummary(summary)
+    ? summary
+    : isValidMarketSummary(extractedSummary)
+    ? extractedSummary
+    : null;
 
   return (
     <div className={`h-full p-4 bg-gray-50 overflow-y-auto ${className}`}>

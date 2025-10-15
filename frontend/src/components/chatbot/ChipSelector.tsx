@@ -14,6 +14,7 @@ interface ChipSelectorProps {
   searchable?: boolean;
   multiple?: boolean;
   className?: string;
+  disabled?: boolean;
 }
 
 export function ChipSelector({
@@ -24,6 +25,7 @@ export function ChipSelector({
   searchable = true,
   multiple = false,
   className = "",
+  disabled = false,
 }: ChipSelectorProps) {
   const { t } = useClientI18n();
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,6 +38,8 @@ export function ChipSelector({
   }, [options, searchTerm, searchable]);
 
   const handleOptionClick = (option: string) => {
+    if (disabled) return;
+    
     if (multiple) {
       const newSelection = selectedValues.includes(option)
         ? selectedValues.filter((val) => val !== option)
@@ -47,12 +51,16 @@ export function ChipSelector({
   };
 
   const handleRemoveSelection = (option: string) => {
+    if (disabled) return;
+    
     if (multiple) {
       onSelectionChange(selectedValues.filter((val) => val !== option));
     }
   };
 
   const clearAll = () => {
+    if (disabled) return;
+    
     onSelectionChange([]);
   };
 
@@ -81,7 +89,11 @@ export function ChipSelector({
             {multiple && selectedValues.length > 1 && (
               <button
                 onClick={clearAll}
-                className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                className={`text-xs flex items-center gap-1 ${
+                  disabled 
+                    ? 'text-gray-300 cursor-not-allowed' 
+                    : 'text-gray-500 hover:text-gray-700 cursor-pointer'
+                }`}
               >
                 <XIcon className="h-3 w-3" />
                 {t("chipSelector.clearAll")}
@@ -123,7 +135,7 @@ export function ChipSelector({
                 key={option}
                 variant="selectable"
                 onClick={() => handleOptionClick(option)}
-                className="hover:scale-105"
+                className={`hover:scale-105 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 {option}
               </Badge>

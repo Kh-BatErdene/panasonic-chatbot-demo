@@ -135,13 +135,13 @@ class OpenAIHandler:
                 # Get subcategories for specific category
                 trend_data = self.data_loader.get_market_trend_data(product_category=category)
                 timeseries_data = self.data_loader.get_timeseries_data(product_category=category)
-                
+
                 subcategories = set()
                 if not trend_data.empty:
                     subcategories.update(trend_data["sub_category"].unique())
                 if not timeseries_data.empty:
                     subcategories.update(timeseries_data["sub_category"].unique())
-                
+
                 # Remove empty values and sort
                 subcategories.discard("")
                 subcategories.discard("sub_category")

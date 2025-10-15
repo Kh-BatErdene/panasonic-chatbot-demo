@@ -11,10 +11,7 @@
     "zoomChart": "Zoom chart"
   },
   "chat": {
-    "start": "Start a conversation",
     "placeholder": "Write here",
-    "selectProductCategory": "Please select a product category.",
-    "selectSubcategory": "Please select a subcategory.",
     "error": "Sorry, I encountered an error. Please try again.",
     "errorProcessing": "Sorry, I encountered an error processing your selection. Please try again."
   },

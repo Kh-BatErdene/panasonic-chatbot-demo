@@ -28,6 +28,7 @@ export function InteractiveMessage({
     null
   );
   const [loadingOptions, setLoadingOptions] = useState(false);
+  const [hasSelectionBeenSent, setHasSelectionBeenSent] = useState(false);
 
   useEffect(() => {
     const content = messageContent.toLowerCase();
@@ -137,6 +138,7 @@ export function InteractiveMessage({
     if (selectionType === "category" || selectionType === "subcategory") {
       if (selected.length > 0) {
         console.log("InteractiveMessage - Sending selection:", selected[0]);
+        setHasSelectionBeenSent(true);
         onSelection(selected[0]);
       }
     }
@@ -146,8 +148,19 @@ export function InteractiveMessage({
   const handleConfirmSelection = () => {
     if (selectedValues.length > 0) {
       // Join multiple selections with commas
+      setHasSelectionBeenSent(true);
       onSelection(selectedValues.join(", "));
     }
+  };
+
+  const handleChipSelectionChange = (selected: string[]) => {
+    // If clearing all selections (empty array), re-enable the interface
+    if (selected.length === 0 && selectedValues.length > 0) {
+      setHasSelectionBeenSent(false);
+    }
+
+    // Call the original handler
+    handleSelectionChange(selected);
   };
 
   if (!selectionType || loadingOptions) {
@@ -159,21 +172,22 @@ export function InteractiveMessage({
       <ChipSelector
         options={options}
         selectedValues={selectedValues}
-        onSelectionChange={handleSelectionChange}
+        onSelectionChange={handleChipSelectionChange}
         placeholder={t("chipSelector.searchPlaceholder", {
           type: selectionType,
         })}
         searchable={selectionType !== "subcategory"}
         multiple={selectionType === "region"}
         className="max-w-full"
+        disabled={hasSelectionBeenSent}
       />
 
       {selectionType === "region" && selectedValues.length > 0 && (
         <div className="mt-4 flex justify-end">
           <button
             onClick={handleConfirmSelection}
-            disabled={isLoading}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading || hasSelectionBeenSent}
+            className="px-4 py-2 bg-blue-500 text-white text-xs rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading
               ? t("interactive.sending")

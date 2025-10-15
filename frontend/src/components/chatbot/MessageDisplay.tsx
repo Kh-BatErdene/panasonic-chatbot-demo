@@ -208,34 +208,6 @@ function extractChartConfig(content: string): ChartConfig | null {
   }
 }
 
-// Function to extract Market Trend Summary from content
-function extractMarketTrendSummary(content: string): string | null {
-  try {
-    // Look for Market Trend Summary section
-    const summaryMatch = content.match(
-      /\*\*Market Trend Summary:\*\*\s*([\s\S]*?)(?=\*\*|$)/i
-    );
-
-    if (summaryMatch) {
-      return summaryMatch[1].trim();
-    }
-
-    // Fallback: look for any summary section
-    const fallbackMatch = content.match(
-      /\*\*Summary:\*\*\s*([\s\S]*?)(?=\*\*|$)/i
-    );
-
-    if (fallbackMatch) {
-      return fallbackMatch[1].trim();
-    }
-
-    return null;
-  } catch (error) {
-    console.error("Error extracting market trend summary:", error);
-    return null;
-  }
-}
-
 // Function to remove chartConfig and Market Trend Summary from content for display
 function removeChartConfigAndSummaryFromContent(content: string) {
   try {
@@ -295,84 +267,76 @@ export function MessageDisplay({
   return (
     <div className="h-full flex flex-col bg-white">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages?.length === 0 ? (
-          <p className="text-center">{t("chat.start")}</p>
-        ) : (
-          messages.map((message) => {
-            const chartConfig =
-              message.role === "assistant"
-                ? extractChartConfig(message.content)
-                : null;
-            const marketSummary =
-              message.role === "assistant"
-                ? extractMarketTrendSummary(message.content)
-                : null;
-            const displayContent =
-              message.role === "assistant"
-                ? removeChartConfigAndSummaryFromContent(message.content)
-                : message.content;
+        {messages.map((message) => {
+          const chartConfig =
+            message.role === "assistant"
+              ? extractChartConfig(message.content)
+              : null;
+          const displayContent =
+            message.role === "assistant"
+              ? removeChartConfigAndSummaryFromContent(message.content)
+              : message.content;
 
-            return (
+          return (
+            <div
+              key={message.id}
+              className={`flex ${
+                message.role === "user" ? "justify-end" : "justify-start"
+              }`}
+            >
               <div
-                key={message.id}
-                className={`flex ${
-                  message.role === "user" ? "justify-end" : "justify-start"
+                className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                  message.role === "user"
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-100 text-gray-900"
                 }`}
               >
-                <div
-                  className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                    message.role === "user"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-100 text-gray-900"
-                  }`}
-                >
-                  {message.role === "assistant" ? (
-                    <div className="space-y-4">
-                      <MarkdownRenderer
-                        content={displayContent}
-                        className="text-sm -mb-2"
-                      />
-                      {chartConfig && (
-                        <div className="mt-4">
-                          <ChartDisplay
-                            chartConfig={chartConfig}
-                            className="border-0 shadow-none"
-                          />
-                        </div>
-                      )}
-                      {(displayContent
-                        .toLowerCase()
-                        .includes("select a product category") ||
-                        displayContent
-                          .toLowerCase()
-                          .includes("select a subcategory") ||
-                        displayContent
-                          .toLowerCase()
-                          .includes("please select a product category") ||
-                        displayContent
-                          .toLowerCase()
-                          .includes("please select a subcategory") ||
-                        (displayContent.toLowerCase().includes("select") &&
-                          displayContent.toLowerCase().includes("region"))) && (
-                        <InteractiveMessage
-                          messageId={message.id}
-                          messageContent={displayContent}
-                          onSelection={(selection) =>
-                            onInteractiveSelection?.(message.id, selection)
-                          }
-                          isLoading={isLoading}
-                          selectedCategory={selectedCategory}
+                {message.role === "assistant" ? (
+                  <div className="space-y-4">
+                    <MarkdownRenderer
+                      content={displayContent}
+                      className="text-sm -mb-2"
+                    />
+                    {chartConfig && (
+                      <div className="mt-4">
+                        <ChartDisplay
+                          chartConfig={chartConfig}
+                          className="border-0 shadow-none"
                         />
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-sm">{message.content}</p>
-                  )}
-                </div>
+                      </div>
+                    )}
+                    {(displayContent
+                      .toLowerCase()
+                      .includes("select a product category") ||
+                      displayContent
+                        .toLowerCase()
+                        .includes("select a subcategory") ||
+                      displayContent
+                        .toLowerCase()
+                        .includes("please select a product category") ||
+                      displayContent
+                        .toLowerCase()
+                        .includes("please select a subcategory") ||
+                      (displayContent.toLowerCase().includes("select") &&
+                        displayContent.toLowerCase().includes("region"))) && (
+                      <InteractiveMessage
+                        messageId={message.id}
+                        messageContent={displayContent}
+                        onSelection={(selection) =>
+                          onInteractiveSelection?.(message.id, selection)
+                        }
+                        isLoading={isLoading}
+                        selectedCategory={selectedCategory}
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm">{message.content}</p>
+                )}
               </div>
-            );
-          })
-        )}
+            </div>
+          );
+        })}
 
         {isLoading && (
           <div className="flex justify-start">

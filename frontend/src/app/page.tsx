@@ -63,20 +63,16 @@ export default function Home() {
       setIsLoading(true);
 
       try {
-        // Determine the conversation flow based on current state
         let assistantResponse = "";
 
         if (!selectedCategory) {
-          // User selected a category
           console.log("Page - Setting selected category to:", selection);
           setSelectedCategory(selection);
           assistantResponse = "Please select a subcategory.";
         } else if (!selectedSubcategory) {
-          // User selected a subcategory - show analysis immediately
           console.log("Page - Setting selected subcategory to:", selection);
           setSelectedSubcategory(selection);
 
-          // Send to AI for analysis with Global region by default
           const questionResponse = await ChatService.submitQuestion(
             `Analyze the market for ${selectedCategory} - ${selection} in Global region`,
             messages
@@ -148,7 +144,7 @@ export default function Home() {
         setIsLoading(false);
       }
     },
-    [messages, selectedCategory, selectedSubcategory]
+    [messages, selectedCategory, selectedSubcategory, t]
   );
 
   const handleSendMessage = useCallback(
@@ -217,7 +213,7 @@ export default function Home() {
         setIsLoading(false);
       }
     },
-    [messages]
+    [messages, t]
   );
 
   return (
@@ -236,7 +232,7 @@ export default function Home() {
                 messages={messages}
                 isLoading={isLoading}
                 onInteractiveSelection={handleInteractiveSelection}
-                selectedCategory={selectedCategory}
+                selectedCategory={selectedCategory || undefined}
               />
             </div>
             <div className="h-31">
