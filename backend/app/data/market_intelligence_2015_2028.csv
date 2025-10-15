@@ -1,4 +1,4 @@
-Year,Region,Consumer_Affinity_Score (1-10),Online_Search_Index (100=2015),ECommerce_Ad_Spend_Effectiveness (%),Social_Media_Sentiment (Positive_%)
+year,region,consumer_affinity_score_1_10,online_search_index_100_2015,ecommerce_ad_spend_effectiveness,social_media_sentiment_positive
 2015,Germany,6.6,100.0,102.0,54.0
 2015,France,6.6,100.0,102.0,54.0
 2015,Italy,6.6,100.0,98.0,54.0

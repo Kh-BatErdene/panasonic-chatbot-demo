@@ -26,12 +26,12 @@ class OpenAIHandler:
             search_results = self.data_loader.search_data(user_message, limit=5)
 
             context = f"""
-## Available Data Options:
-**Regions**: {', '.join(regions[:10])}{'...' if len(regions) > 10 else ''}
-**Product Categories**: {', '.join(categories[:10])}{'...' if len(categories) > 10 else ''}
+            ## Available Data Options:
+            **Regions**: {', '.join(regions[:10])}{'...' if len(regions) > 10 else ''}
+            **Product Categories**: {', '.join(categories[:10])}{'...' if len(categories) > 10 else ''}
 
-## Relevant Data Found:
-"""
+            ## Relevant Data Found:
+            """
 
             for dataset_name, data in search_results.items():
                 if not data.empty:
@@ -61,8 +61,8 @@ class OpenAIHandler:
             system_message = SYSTEM_PROMPT
 
             # Add data context if this is a user message
-            if messages and messages[-1].get('role') == 'user':
-                data_context = self._prepare_data_context(messages[-1]['content'])
+            if messages and messages[-1].get("role") == "user":
+                data_context = self._prepare_data_context(messages[-1]["content"])
                 system_message += f"\n\n## Current Data Context:\n{data_context}"
 
             # Prepare messages with system prompt
@@ -70,11 +70,7 @@ class OpenAIHandler:
             full_messages.extend(messages)
 
             response = self._openai_client.chat.completions.create(
-                model=model,
-                messages=full_messages,
-                max_tokens=2000,
-                temperature=0.3,
-                stream=False
+                model=model, messages=full_messages, max_tokens=2000, temperature=0.3, stream=False
             )
             return response.choices[0].message.content
         except Exception as e:
@@ -100,14 +96,14 @@ class OpenAIHandler:
             intelligence_data = self.data_loader.get_market_intelligence_data(region)
 
             return {
-                "trend_data": trend_data.to_dict('records') if not trend_data.empty else [],
-                "timeseries_data": timeseries_data.to_dict('records') if not timeseries_data.empty else [],
-                "intelligence_data": intelligence_data.to_dict('records') if not intelligence_data.empty else [],
+                "trend_data": trend_data.to_dict("records") if not trend_data.empty else [],
+                "timeseries_data": timeseries_data.to_dict("records") if not timeseries_data.empty else [],
+                "intelligence_data": intelligence_data.to_dict("records") if not intelligence_data.empty else [],
                 "summary": {
                     "total_trend_records": len(trend_data),
                     "total_timeseries_records": len(timeseries_data),
-                    "total_intelligence_records": len(intelligence_data)
-                }
+                    "total_intelligence_records": len(intelligence_data),
+                },
             }
         except Exception as e:
             return {"error": f"Failed to analyze market trend: {str(e)}"}

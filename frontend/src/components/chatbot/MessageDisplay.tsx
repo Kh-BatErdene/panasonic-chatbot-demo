@@ -6,8 +6,56 @@ import { MarkdownRenderer } from "./MarkdownRenderer";
 import { ChartDisplay } from "./ChartDisplay";
 import { useClientI18n } from "@/hooks/useClientI18n";
 
+// Type definitions for chart configuration
+interface ChartSeries {
+  name: string;
+  type: string;
+  stack: string;
+  data: number[];
+  itemStyle: {
+    color: string;
+  };
+}
+
+interface ChartConfig {
+  title: {
+    text: string;
+    subtext?: string;
+    left?: string;
+  };
+  tooltip: {
+    trigger: string;
+    axisPointer: {
+      type: string;
+    };
+  };
+  legend: {
+    data: string[];
+    bottom?: string;
+  };
+  grid: {
+    left: string;
+    right: string;
+    bottom: string;
+    top?: string;
+    containLabel: boolean;
+  };
+  xAxis: {
+    type: string;
+    data: string[];
+  };
+  yAxis: {
+    type: string;
+    name: string;
+    axisLabel: {
+      formatter: string;
+    };
+  };
+  series: ChartSeries[];
+}
+
 // Function to extract chartConfig from message content
-function extractChartConfig(content: string) {
+function extractChartConfig(content: string): ChartConfig | null {
   try {
     // First, try to find JSON within markdown code blocks
     const codeBlockMatch = content.match(
@@ -29,18 +77,20 @@ function extractChartConfig(content: string) {
 
         // Check if chart config has valid data
         if (chartConfig && chartConfig.series) {
-          const hasValidData = chartConfig.series.every((series: any) => {
-            return (
-              series.data &&
-              Array.isArray(series.data) &&
-              series.data.length > 0 &&
-              !series.data.some(
-                (value: any) =>
-                  typeof value === "string" &&
-                  (value.includes("[values]") || value.includes("values"))
-              )
-            );
-          });
+          const hasValidData = chartConfig.series.every(
+            (series: ChartSeries) => {
+              return (
+                series.data &&
+                Array.isArray(series.data) &&
+                series.data.length > 0 &&
+                !series.data.some(
+                  (value: number | string) =>
+                    typeof value === "string" &&
+                    (value.includes("[values]") || value.includes("values"))
+                )
+              );
+            }
+          );
 
           if (!hasValidData) {
             console.warn(
@@ -76,18 +126,20 @@ function extractChartConfig(content: string) {
 
         // Check if chart config has valid data
         if (chartConfig && chartConfig.series) {
-          const hasValidData = chartConfig.series.every((series: any) => {
-            return (
-              series.data &&
-              Array.isArray(series.data) &&
-              series.data.length > 0 &&
-              !series.data.some(
-                (value: any) =>
-                  typeof value === "string" &&
-                  (value.includes("[values]") || value.includes("values"))
-              )
-            );
-          });
+          const hasValidData = chartConfig.series.every(
+            (series: ChartSeries) => {
+              return (
+                series.data &&
+                Array.isArray(series.data) &&
+                series.data.length > 0 &&
+                !series.data.some(
+                  (value: number | string) =>
+                    typeof value === "string" &&
+                    (value.includes("[values]") || value.includes("values"))
+                )
+              );
+            }
+          );
 
           if (!hasValidData) {
             console.warn(
@@ -120,18 +172,20 @@ function extractChartConfig(content: string) {
 
         // Check if chart config has valid data
         if (chartConfig && chartConfig.series) {
-          const hasValidData = chartConfig.series.every((series: any) => {
-            return (
-              series.data &&
-              Array.isArray(series.data) &&
-              series.data.length > 0 &&
-              !series.data.some(
-                (value: any) =>
-                  typeof value === "string" &&
-                  (value.includes("[values]") || value.includes("values"))
-              )
-            );
-          });
+          const hasValidData = chartConfig.series.every(
+            (series: ChartSeries) => {
+              return (
+                series.data &&
+                Array.isArray(series.data) &&
+                series.data.length > 0 &&
+                !series.data.some(
+                  (value: number | string) =>
+                    typeof value === "string" &&
+                    (value.includes("[values]") || value.includes("values"))
+                )
+              );
+            }
+          );
 
           if (!hasValidData) {
             console.warn(
@@ -250,7 +304,7 @@ export function MessageDisplay({
 
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 text-gray-900 rounded-lg px-4 py-2">
+            <div className="bg-gray-100 text-gray-900 rounded-lg px-4 py-3">
               <div className="flex items-center space-x-2">
                 <div className="flex space-x-1">
                   <div className="size-1 bg-gray-400 rounded-full animate-bounce" />
