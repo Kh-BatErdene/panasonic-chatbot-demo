@@ -1,0 +1,12 @@
+{
+  "languages": {
+    "label": "言語",
+    "en": "English",
+    "ja": "日本語"
+  },
+  "common": {},
+  "chat": {
+    "start": "会話を始める",
+    "placeholder": "ここに書いてください"
+  }
+}

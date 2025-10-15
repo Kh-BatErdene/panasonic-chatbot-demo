@@ -1,0 +1,7 @@
+fastapi==0.119.0
+uvicorn==0.37.0
+python-dotenv==1.1.1
+watchtower==3.4.0
+openai==2.3.0
+tenacity==9.1.2
+pandas==2.2.0
