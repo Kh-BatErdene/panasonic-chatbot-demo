@@ -5,17 +5,62 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/**
- * Extracts market summary from assistant response content
- * Looks for JSON structure in the response and formats it as a readable string
- * Also handles Market Trend Summary section
- */
 export function extractMarketSummary(content: string): string | null {
   try {
-    // Debug logging
-    console.log('Extracting market summary from content:', content.substring(0, 200) + '...');
-    // Look for Market Summary section in the content
-    const marketSummaryMatch = content.match(
+    console.log(
+      "Extracting market summary from content:",
+      content.substring(0, 200) + "..."
+    );
+
+    // First, look for Market Trend Summary section specifically
+    const marketTrendSummaryMatch = content.match(
+      /\*\*Market Trend Summary:\*\*\s*([\s\S]*?)(?=\*\*|$)/i
+    );
+
+    if (marketTrendSummaryMatch) {
+      let summary = marketTrendSummaryMatch[1].trim();
+
+      // Remove any Graphic Configuration from the summary
+      summary = summary
+        .replace(/### Graphic Configuration:[\s\S]*$/i, "")
+        .replace(/```json\s*\{[\s\S]*?"chartConfig"[\s\S]*?\}\s*```/g, "")
+        .replace(/\{\s*"chartConfig"\s*:\s*\{[\s\S]*?\}\s*\}/g, "")
+        .trim();
+
+      console.log(
+        "Found Market Trend Summary:",
+        summary.substring(0, 100) + "..."
+      );
+      return summary;
+    }
+
+    // Fallback: Look for any Summary section
+    const summaryMatch = content.match(
+      /\*\*Summary:\*\*\s*([\s\S]*?)(?=\*\*|$)/i
+    );
+
+    if (summaryMatch) {
+      let summary = summaryMatch[1].trim();
+
+      // Remove any Graphic Configuration from the summary
+      summary = summary
+        .replace(/### Graphic Configuration:[\s\S]*$/i, "")
+        .replace(/```json\s*\{[\s\S]*?"chartConfig"[\s\S]*?\}\s*```/g, "")
+        .replace(/\{\s*"chartConfig"\s*:\s*\{[\s\S]*?\}\s*\}/g, "")
+        .trim();
+
+      console.log("Found Summary section:", summary.substring(0, 100) + "...");
+      return summary;
+    }
+
+    // Legacy support: Look for Market Summary JSON structure
+    const cleanContent = content
+      .replace(/```json\s*\{[\s\S]*?"chartConfig"[\s\S]*?\}\s*```/g, "")
+      .replace(/\{\s*"chartConfig"\s*:\s*\{[\s\S]*?\}\s*\}/g, "")
+      .replace(/### Graphic Configuration:[\s\S]*$/i, "")
+      .trim();
+
+    const marketSummaryMatch = cleanContent.match(
       /Market Summary:\s*(\{[\s\S]*?\})/i
     );
 
@@ -67,37 +112,40 @@ export function extractMarketSummary(content: string): string | null {
       }
     }
 
-    // If no JSON structure found, look for Market Trend Summary section
-    // Try different patterns for Market Trend Summary
+    // If no specific summary found, look for text summary patterns
     const patterns = [
-      // Pattern 1: **Market Trend Summary:** followed by content
-      /\*\*Market Trend Summary:\*\*\s*([\s\S]*?)(?=\*\*|$)/i,
-      // Pattern 2: Market Trend Summary: (without **)
-      /Market Trend Summary:\s*([\s\S]*?)(?=\*\*|$)/i,
-      // Pattern 3: **Market Trend Summary:** with bullet points
-      /\*\*Market Trend Summary:\*\*\s*([\s\S]*?)(?=\*\*|$)/i
+      // Pattern 1: Look for text before "### Graphic Configuration"
+      /^([\s\S]*?)(?=### Graphic Configuration:|```json|\{\s*"chartConfig")/i,
+      // Pattern 2: Look for text summary patterns
+      /(?:The historical trend|Historical trend|Forecast outlook|Market analysis)[\s\S]*?(?=###|```|\{|$)/i,
+      // Pattern 3: Look for any meaningful text before JSON
+      /^([\s\S]*?)(?=\{\s*"chartConfig"|```json)/i,
     ];
 
     for (const pattern of patterns) {
-      const match = content.match(pattern);
+      const match = cleanContent.match(pattern);
       if (match) {
-        console.log('Found Market Trend Summary match:', match[0].substring(0, 100) + '...');
-        const trendSummary = match[1].trim();
-        if (trendSummary) {
-          // Clean up the content - remove leading dashes and format nicely
-          const cleanedSummary = trendSummary
-            .replace(/^-\s*/gm, '• ') // Replace leading dashes with bullets
-            .replace(/\n\s*\n/g, '\n\n') // Clean up multiple newlines
-            .trim();
-          
-          console.log('Extracted Market Trend Summary:', cleanedSummary.substring(0, 100) + '...');
-          return `**Market Trend Summary:**\n\n${cleanedSummary}`;
+        const textSummary = match[1]?.trim();
+        if (textSummary && textSummary.length > 50) {
+          // Only if it's substantial content
+          console.log(
+            "Found text summary:",
+            textSummary.substring(0, 100) + "..."
+          );
+          return textSummary;
         }
       }
     }
-    
-    console.log('No Market Trend Summary found in content');
 
+    // Fallback: return the clean content if it doesn't contain JSON
+    if (
+      !cleanContent.includes('"chartConfig"') &&
+      !cleanContent.includes("```json")
+    ) {
+      return cleanContent;
+    }
+
+    console.log("No market summary found in content");
     return null;
   } catch (error) {
     console.error("Error extracting market summary:", error);

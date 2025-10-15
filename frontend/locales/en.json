@@ -4,9 +4,35 @@
     "en": "English",
     "ja": "日本語"
   },
-  "common": {},
+  "common": {
+    "sending": "Sending...",
+    "confirm": "Confirm Selection",
+    "chart": "Chart",
+    "zoomChart": "Zoom chart"
+  },
   "chat": {
     "start": "Start a conversation",
-    "placeholder": "Write here"
+    "placeholder": "Write here",
+    "selectProductCategory": "Please select a product category.",
+    "selectSubcategory": "Please select a subcategory.",
+    "error": "Sorry, I encountered an error. Please try again.",
+    "errorProcessing": "Sorry, I encountered an error processing your selection. Please try again."
+  },
+  "report": {
+    "title": "Market Analysis Report",
+    "summaryTitle": "Market Trend Summary",
+    "noSummaryAvailable": "No market trend summary available for this analysis."
+  },
+  "chipSelector": {
+    "noOptionsMatch": "No options match your search",
+    "allOptionsSelected": "All options selected",
+    "searchPlaceholder": "Search {type}s...",
+    "selected": "Selected ({count})",
+    "clearAll": "Clear all",
+    "availableOptions": "Available Options"
+  },
+  "interactive": {
+    "sending": "Sending...",
+    "confirmSelection": "Confirm Selection"
   }
 }

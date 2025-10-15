@@ -63,6 +63,46 @@ export class ChatService {
 
     return response.json();
   }
+
+  static async getProductCategories(): Promise<{ categories: string[] }> {
+    const response = await fetch(`${API_BASE_URL}/chat/data/categories`);
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to get product categories: ${response.statusText}`
+      );
+    }
+
+    return response.json();
+  }
+
+  static async getSubcategories(
+    category?: string
+  ): Promise<{ subcategories: string[] }> {
+    const url = category
+      ? `${API_BASE_URL}/chat/data/subcategories?category=${encodeURIComponent(
+          category
+        )}`
+      : `${API_BASE_URL}/chat/data/subcategories`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Failed to get subcategories: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  static async getRegions(): Promise<{ regions: string[] }> {
+    const response = await fetch(`${API_BASE_URL}/chat/data/regions`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to get regions: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
 }
 
 export type { ChatMessage };

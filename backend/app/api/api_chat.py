@@ -80,6 +80,45 @@ async def get_echarts_config(
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
+@router.get("/data/categories")
+async def get_product_categories():
+    """
+    Get all available product categories
+    """
+    try:
+        categories = chat_controller.get_product_categories()
+        return {"categories": categories}
+    except Exception as e:
+        logger.write_error(f"Error in get_product_categories endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+
+@router.get("/data/subcategories")
+async def get_subcategories(category: Optional[str] = Query(None, description="Product category to get subcategories for")):
+    """
+    Get subcategories for a specific product category
+    """
+    try:
+        subcategories = chat_controller.get_subcategories(category)
+        return {"subcategories": subcategories}
+    except Exception as e:
+        logger.write_error(f"Error in get_subcategories endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+
+@router.get("/data/regions")
+async def get_regions():
+    """
+    Get all available regions
+    """
+    try:
+        regions = chat_controller.get_regions()
+        return {"regions": regions}
+    except Exception as e:
+        logger.write_error(f"Error in get_regions endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+
 @router.get("/health")
 async def health_check():
     """

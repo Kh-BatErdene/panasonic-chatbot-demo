@@ -52,7 +52,7 @@ export function MessageInput({
               type="submit"
               variant="default"
               className="rounded-full ml-auto"
-              size="icon-xs"
+              size="icon-sm"
               disabled={!message.trim() || isLoading}
             >
               <ArrowUpIcon />

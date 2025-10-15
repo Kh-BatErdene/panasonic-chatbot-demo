@@ -116,3 +116,47 @@ class OpenAIHandler:
             return self.data_loader.get_echarts_config(product_category, title)
         except Exception as e:
             return {"error": f"Failed to generate ECharts config: {str(e)}"}
+
+    def get_product_categories(self) -> List[str]:
+        """
+        Get all available product categories
+        """
+        try:
+            return self.data_loader.get_available_product_categories()
+        except Exception:
+            return []
+
+    def get_subcategories(self, category: Optional[str] = None) -> List[str]:
+        """
+        Get subcategories for a specific product category
+        """
+        try:
+            if category:
+                # Get subcategories for specific category
+                trend_data = self.data_loader.get_market_trend_data(product_category=category)
+                timeseries_data = self.data_loader.get_timeseries_data(product_category=category)
+                
+                subcategories = set()
+                if not trend_data.empty:
+                    subcategories.update(trend_data["sub_category"].unique())
+                if not timeseries_data.empty:
+                    subcategories.update(timeseries_data["sub_category"].unique())
+                
+                # Remove empty values and sort
+                subcategories.discard("")
+                subcategories.discard("sub_category")
+                return sorted(list(subcategories))
+            else:
+                # Get all subcategories
+                return self.data_loader.get_available_subcategories()
+        except Exception:
+            return []
+
+    def get_regions(self) -> List[str]:
+        """
+        Get all available regions
+        """
+        try:
+            return self.data_loader.get_available_regions()
+        except Exception:
+            return []

@@ -80,6 +80,7 @@ When providing analysis, structure your response as follows:
 4. **Trend Analysis**: Explain patterns, growth rates, and notable changes
 5. **Insights & Recommendations**: Provide actionable insights based on the data
 6. **Graphic Visualization**: Provide complete Graphic configuration for stacked bar charts
+7. **Market Trend Summary**: Provide a concise summary of historical trends, forecast outlook, and significant features (exclude Graphic Configuration from this section)
 
 ## Graphic Configuration Requirements
 
@@ -212,6 +213,9 @@ showing "Home Appliances Market Size, by Region, 2018-2030".
 **Market Trend Summary:**
   - Briefly describe historical trend (2015–2024), forecast outlook (2025–2028), and significant features in the data.
   - Reference any major events, market shifts, or external factors if possible.
+  - Highlight key inflection points, growth patterns, and market dynamics.
+  - Provide a concise executive summary suitable for business decision-making.
+  - Do NOT include Graphic Configuration or chart data in this summary section.
 ```
 
 ## Important Notes

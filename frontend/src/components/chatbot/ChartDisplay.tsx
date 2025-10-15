@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import ReactECharts from "echarts-for-react";
 import { ZoomIn } from "lucide-react";
+import { useClientI18n } from "@/hooks/useClientI18n";
 import {
   Dialog,
   DialogContent,
@@ -67,13 +68,14 @@ export function ChartDisplay({
   title,
   className = "",
 }: ChartDisplayProps) {
+  const { t } = useClientI18n();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   if (!chartConfig) {
     return null;
   }
 
-  const chartTitle = chartConfig.title?.text || title || "Chart";
+  const chartTitle = chartConfig.title?.text || title || t("common.chart");
 
   // Process chart config to fix layout issues
   const processedChartConfig = {
@@ -119,7 +121,7 @@ export function ChartDisplay({
         <DialogTrigger asChild>
           <button
             className="absolute top-2 right-2 z-10 p-2 bg-white/80 hover:bg-white rounded-full shadow-md transition-colors"
-            aria-label="Zoom chart"
+            aria-label={t("common.zoomChart")}
           >
             <ZoomIn className="size-4 text-gray-600" />
           </button>

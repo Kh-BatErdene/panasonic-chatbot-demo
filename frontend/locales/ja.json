@@ -4,9 +4,35 @@
     "en": "English",
     "ja": "日本語"
   },
-  "common": {},
+  "common": {
+    "sending": "送信中...",
+    "confirm": "選択を確認",
+    "chart": "チャート",
+    "zoomChart": "チャートをズーム"
+  },
   "chat": {
     "start": "会話を始める",
-    "placeholder": "ここに書いてください"
+    "placeholder": "ここに書いてください",
+    "selectProductCategory": "製品カテゴリを選択してください。",
+    "selectSubcategory": "サブカテゴリを選択してください。",
+    "error": "申し訳ございません。エラーが発生しました。もう一度お試しください。",
+    "errorProcessing": "申し訳ございません。選択の処理中にエラーが発生しました。もう一度お試しください。"
+  },
+  "report": {
+    "title": "市場分析レポート",
+    "summaryTitle": "市場トレンドサマリー",
+    "noSummaryAvailable": "この分析には市場トレンドサマリーがありません。"
+  },
+  "chipSelector": {
+    "noOptionsMatch": "検索に一致するオプションがありません",
+    "allOptionsSelected": "すべてのオプションが選択されています",
+    "searchPlaceholder": "{type}を検索...",
+    "selected": "選択済み ({count})",
+    "clearAll": "すべてクリア",
+    "availableOptions": "利用可能なオプション"
+  },
+  "interactive": {
+    "sending": "送信中...",
+    "confirmSelection": "選択を確認"
   }
 }

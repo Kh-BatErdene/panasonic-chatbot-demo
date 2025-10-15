@@ -4,9 +4,9 @@ import { useEffect, useRef } from "react";
 import { ChatMessage } from "../types";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { ChartDisplay } from "./ChartDisplay";
+import { InteractiveMessage } from "./InteractiveMessage";
 import { useClientI18n } from "@/hooks/useClientI18n";
 
-// Type definitions for chart configuration
 interface ChartSeries {
   name: string;
   type: string;
@@ -208,8 +208,36 @@ function extractChartConfig(content: string): ChartConfig | null {
   }
 }
 
-// Function to remove chartConfig from content for display
-function removeChartConfigFromContent(content: string) {
+// Function to extract Market Trend Summary from content
+function extractMarketTrendSummary(content: string): string | null {
+  try {
+    // Look for Market Trend Summary section
+    const summaryMatch = content.match(
+      /\*\*Market Trend Summary:\*\*\s*([\s\S]*?)(?=\*\*|$)/i
+    );
+
+    if (summaryMatch) {
+      return summaryMatch[1].trim();
+    }
+
+    // Fallback: look for any summary section
+    const fallbackMatch = content.match(
+      /\*\*Summary:\*\*\s*([\s\S]*?)(?=\*\*|$)/i
+    );
+
+    if (fallbackMatch) {
+      return fallbackMatch[1].trim();
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error extracting market trend summary:", error);
+    return null;
+  }
+}
+
+// Function to remove chartConfig and Market Trend Summary from content for display
+function removeChartConfigAndSummaryFromContent(content: string) {
   try {
     // First, try to remove markdown code blocks containing chartConfig
     let cleanedContent = content.replace(
@@ -223,9 +251,21 @@ function removeChartConfigFromContent(content: string) {
       ""
     );
 
+    // Remove Market Trend Summary section
+    cleanedContent = cleanedContent.replace(
+      /\*\*Market Trend Summary:\*\*\s*([\s\S]*?)(?=\*\*|$)/gi,
+      ""
+    );
+
+    // Remove any standalone Summary section
+    cleanedContent = cleanedContent.replace(
+      /\*\*Summary:\*\*\s*([\s\S]*?)(?=\*\*|$)/gi,
+      ""
+    );
+
     return cleanedContent.trim();
   } catch (error) {
-    console.error("Error removing chartConfig:", error);
+    console.error("Error removing chartConfig and summary:", error);
     return content;
   }
 }
@@ -233,9 +273,13 @@ function removeChartConfigFromContent(content: string) {
 export function MessageDisplay({
   messages,
   isLoading = false,
+  onInteractiveSelection,
+  selectedCategory,
 }: {
   messages: ChatMessage[];
   isLoading?: boolean;
+  onInteractiveSelection?: (messageId: string, selection: string) => void;
+  selectedCategory?: string;
 }) {
   const { t } = useClientI18n();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -259,9 +303,13 @@ export function MessageDisplay({
               message.role === "assistant"
                 ? extractChartConfig(message.content)
                 : null;
+            const marketSummary =
+              message.role === "assistant"
+                ? extractMarketTrendSummary(message.content)
+                : null;
             const displayContent =
               message.role === "assistant"
-                ? removeChartConfigFromContent(message.content)
+                ? removeChartConfigAndSummaryFromContent(message.content)
                 : message.content;
 
             return (
@@ -288,9 +336,33 @@ export function MessageDisplay({
                         <div className="mt-4">
                           <ChartDisplay
                             chartConfig={chartConfig}
-                            className="border-0 shadow-none p-0"
+                            className="border-0 shadow-none"
                           />
                         </div>
+                      )}
+                      {(displayContent
+                        .toLowerCase()
+                        .includes("select a product category") ||
+                        displayContent
+                          .toLowerCase()
+                          .includes("select a subcategory") ||
+                        displayContent
+                          .toLowerCase()
+                          .includes("please select a product category") ||
+                        displayContent
+                          .toLowerCase()
+                          .includes("please select a subcategory") ||
+                        (displayContent.toLowerCase().includes("select") &&
+                          displayContent.toLowerCase().includes("region"))) && (
+                        <InteractiveMessage
+                          messageId={message.id}
+                          messageContent={displayContent}
+                          onSelection={(selection) =>
+                            onInteractiveSelection?.(message.id, selection)
+                          }
+                          isLoading={isLoading}
+                          selectedCategory={selectedCategory}
+                        />
                       )}
                     </div>
                   ) : (

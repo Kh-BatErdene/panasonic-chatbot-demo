@@ -89,3 +89,33 @@ class ChatController:
         except Exception as e:
             logger.write_error(f"Error generating ECharts config: {str(e)}")
             raise Exception(f"Failed to generate ECharts config: {str(e)}") from e
+
+    def get_product_categories(self) -> list:
+        """
+        Get all available product categories
+        """
+        try:
+            return self.openai_handler.get_product_categories()
+        except Exception as e:
+            logger.write_error(f"Error getting product categories: {str(e)}")
+            raise Exception(f"Failed to get product categories: {str(e)}") from e
+
+    def get_subcategories(self, category: Optional[str] = None) -> list:
+        """
+        Get subcategories for a specific product category
+        """
+        try:
+            return self.openai_handler.get_subcategories(category)
+        except Exception as e:
+            logger.write_error(f"Error getting subcategories: {str(e)}")
+            raise Exception(f"Failed to get subcategories: {str(e)}") from e
+
+    def get_regions(self) -> list:
+        """
+        Get all available regions
+        """
+        try:
+            return self.openai_handler.get_regions()
+        except Exception as e:
+            logger.write_error(f"Error getting regions: {str(e)}")
+            raise Exception(f"Failed to get regions: {str(e)}") from e
