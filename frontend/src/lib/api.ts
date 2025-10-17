@@ -54,6 +54,67 @@ export class ChatService {
     return response.json();
   }
 
+  static async getAnswerStream(
+    messageId: string,
+    onChunk: (chunk: unknown) => void,
+    onError?: (error: Error) => void,
+    onComplete?: () => void
+  ): Promise<void> {
+    const request: ChatAnswerRequest = {
+      message_id: messageId,
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/chat/answer/stream`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(request),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to get streaming answer: ${response.statusText}`
+        );
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error("No response body reader available");
+      }
+
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          onComplete?.();
+          break;
+        }
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || ""; // Keep incomplete line in buffer
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              onChunk(data);
+            } catch (e) {
+              console.warn("Failed to parse chunk:", e);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      onError?.(error as Error);
+    }
+  }
+
   static async healthCheck(): Promise<{ status: string; service: string }> {
     const response = await fetch(`${API_BASE_URL}/chat/health`);
 
@@ -99,6 +160,22 @@ export class ChatService {
 
     if (!response.ok) {
       throw new Error(`Failed to get regions: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  static async performWebSearch(input: string): Promise<unknown> {
+    const response = await fetch(`${API_BASE_URL}/chat/web-search`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ input }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to perform web search: ${response.statusText}`);
     }
 
     return response.json();

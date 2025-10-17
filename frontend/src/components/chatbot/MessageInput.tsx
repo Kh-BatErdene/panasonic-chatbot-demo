@@ -36,8 +36,8 @@ export function MessageInput({
   };
 
   return (
-    <div className="bg-white rounded-lg">
-      <form onSubmit={handleSubmit} className="mx-3">
+    <div className="bg-white border-t border-gray-200">
+      <form onSubmit={handleSubmit} className="p-3">
         <InputGroup>
           <InputGroupTextarea
             placeholder={t("chat.placeholder")}
@@ -45,17 +45,22 @@ export function MessageInput({
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             disabled={isLoading}
-            className="resize-none"
+            className="resize-none text-sm"
+            rows={2}
           />
           <InputGroupAddon align="block-end">
             <InputGroupButton
               type="submit"
               variant="default"
-              className="rounded-full ml-auto"
+              className="rounded-full ml-auto bg-blue-600 hover:bg-blue-700"
               size="icon-sm"
               disabled={!message.trim() || isLoading}
             >
-              <ArrowUpIcon />
+              {isLoading ? (
+                <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <ArrowUpIcon className="size-4" />
+              )}
             </InputGroupButton>
           </InputGroupAddon>
         </InputGroup>

@@ -135,12 +135,24 @@
   @apply font-semibold text-gray-900 mt-4 mb-2;
 }
 
-.prose h1 { @apply text-lg; }
-.prose h2 { @apply text-base; }
-.prose h3 { @apply text-sm; }
-.prose h4 { @apply text-sm; }
-.prose h5 { @apply text-xs; }
-.prose h6 { @apply text-xs; }
+.prose h1 {
+  @apply text-lg;
+}
+.prose h2 {
+  @apply text-base;
+}
+.prose h3 {
+  @apply text-sm;
+}
+.prose h4 {
+  @apply text-sm;
+}
+.prose h5 {
+  @apply text-xs;
+}
+.prose h6 {
+  @apply text-xs;
+}
 
 .prose p {
   @apply mb-2 text-sm leading-relaxed;
@@ -206,4 +218,51 @@
 
 .prose th {
   @apply bg-gray-100 font-semibold;
+}
+
+/* Chart-specific responsive styles */
+@media (max-width: 768px) {
+  .chart-container {
+    /* Adjust chart spacing for mobile */
+    padding: 0.5rem;
+  }
+
+  .chart-legend {
+    /* Make legend more compact on mobile */
+    font-size: 10px;
+    item-gap: 15px;
+  }
+
+  .chart-title {
+    /* Adjust title size for mobile */
+    font-size: 14px;
+  }
+}
+
+/* Enhanced chart legend styles */
+.echarts-legend {
+  /* Ensure legend is always visible and properly styled */
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.echarts-legend-item {
+  /* Improve legend item spacing and styling */
+  margin-right: 20px !important;
+  font-weight: 500 !important;
+}
+
+/* Chart accessibility improvements */
+.echarts-legend-item:hover {
+  /* Add hover effect for better UX */
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+/* Dark mode chart adjustments */
+.dark .echarts-legend {
+  background: rgba(33, 37, 41, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }

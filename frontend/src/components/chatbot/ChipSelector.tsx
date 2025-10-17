@@ -39,7 +39,20 @@ export function ChipSelector({
 
   const handleOptionClick = (option: string) => {
     if (disabled) return;
-    
+
+    // Special handling for "All" button - select all other options
+    const allRegionsOption = t("page.allRegionsOption");
+    if (option === allRegionsOption) {
+      if (multiple) {
+        // Select all options except "All" itself
+        const allOptions = options.filter((opt) => opt !== allRegionsOption);
+        onSelectionChange(allOptions);
+      } else {
+        onSelectionChange([option]);
+      }
+      return;
+    }
+
     if (multiple) {
       const newSelection = selectedValues.includes(option)
         ? selectedValues.filter((val) => val !== option)
@@ -52,7 +65,7 @@ export function ChipSelector({
 
   const handleRemoveSelection = (option: string) => {
     if (disabled) return;
-    
+
     if (multiple) {
       onSelectionChange(selectedValues.filter((val) => val !== option));
     }
@@ -60,7 +73,7 @@ export function ChipSelector({
 
   const clearAll = () => {
     if (disabled) return;
-    
+
     onSelectionChange([]);
   };
 
@@ -90,9 +103,9 @@ export function ChipSelector({
               <button
                 onClick={clearAll}
                 className={`text-xs flex items-center gap-1 ${
-                  disabled 
-                    ? 'text-gray-300 cursor-not-allowed' 
-                    : 'text-gray-500 hover:text-gray-700 cursor-pointer'
+                  disabled
+                    ? "text-gray-300 cursor-not-allowed"
+                    : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 }`}
               >
                 <XIcon className="h-3 w-3" />
@@ -135,7 +148,13 @@ export function ChipSelector({
                 key={option}
                 variant="selectable"
                 onClick={() => handleOptionClick(option)}
-                className={`hover:scale-105 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                className={`hover:scale-105 ${
+                  disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                }                 ${
+                  option === t("page.allRegionsOption")
+                    ? "bg-gray-200 text-gray-700 border-gray-400 font-semibold hover:bg-gray-300"
+                    : ""
+                }`}
               >
                 {option}
               </Badge>

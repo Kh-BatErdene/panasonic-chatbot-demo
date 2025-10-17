@@ -18,7 +18,8 @@
   "report": {
     "title": "Market Analysis Report",
     "summaryTitle": "Market Trend Summary",
-    "noSummaryAvailable": "No market trend summary available for this analysis."
+    "noSummaryAvailable": "No market trend summary available for this analysis.",
+    "webSearchLoading": "Searching web for additional insights..."
   },
   "chipSelector": {
     "noOptionsMatch": "No options match your search",
@@ -31,5 +32,39 @@
   "interactive": {
     "sending": "Sending...",
     "confirmSelection": "Confirm Selection"
+  },
+  "page": {
+    "initialMessage": "Please select a product category.",
+    "selectSubcategory": "Please select a subcategory.",
+    "selectRegion": "Please select a region.",
+    "analyzeMarket": "Analyze the market for {category} - {subcategory} in {region}",
+    "allRegions": "all regions ({india}, {singapore}, {vietnam})",
+    "noChartData": "No Chart Data",
+    "completeAnalysis": "Complete your market analysis to see interactive charts",
+    "marketAnalysisChat": "Market Analysis Chat",
+    "askQuestions": "Ask questions about market data",
+    "openChat": "Open Chat",
+    "analyzing": "Analyzing...",
+    "chartType": "Chart Type:",
+    "downloadChartConfig": "Download chart configuration",
+    "zoomChart": "Zoom chart",
+    "stackedBar": "Stacked Bar",
+    "stackedBarDescription": "Stacked bar chart showing cumulative values",
+    "lineChart": "Line Chart",
+    "lineChartDescription": "Line chart showing trends over time",
+    "groupedBar": "Grouped Bar",
+    "groupedBarDescription": "Grouped bar chart for comparisons",
+    "percentage": "Percentage",
+    "percentageDescription": "100% stacked bar chart showing proportions",
+    "marketAnalysisReport": "Market Analysis Report",
+    "reportStatus": "Report Status",
+    "analyzingMarketData": "Analyzing market data and trends...",
+    "completeMarketAnalysis": "Complete your market analysis to see detailed insights",
+    "allRegionsOption": "All",
+    "regions": {
+      "india": "India",
+      "singapore": "Singapore",
+      "vietnam": "Vietnam"
+    }
   }
 }

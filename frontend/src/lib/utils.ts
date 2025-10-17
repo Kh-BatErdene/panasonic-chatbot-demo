@@ -55,7 +55,7 @@ export function extractMarketSummary(content: string): string | null {
         // If it contains market analysis, process the answer content
         content = answer;
       }
-    } catch (jsonError) {
+    } catch {
       // Not a JSON response, continue with normal processing
     }
 

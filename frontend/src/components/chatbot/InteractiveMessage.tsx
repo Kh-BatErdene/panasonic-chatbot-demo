@@ -34,37 +34,51 @@ export function InteractiveMessage({
     const content = messageContent.toLowerCase();
     console.log("InteractiveMessage - Message content:", content);
 
-    // Use English keywords for detection to avoid translation dependency
+    // Use localized keywords for detection with fallbacks
+    const initialMessage = t("page.initialMessage").toLowerCase();
+    const selectSubcategory = t("page.selectSubcategory").toLowerCase();
+    const selectRegion = t("page.selectRegion").toLowerCase();
+
+    console.log("InteractiveMessage - Detection strings:", {
+      initialMessage,
+      selectSubcategory,
+      selectRegion,
+    });
+
+    // Category detection - more flexible patterns
     if (
-      content.includes("select a product category") ||
+      content.includes(initialMessage) ||
       content.includes("product category") ||
-      content.includes("please select a product category")
+      (content.includes("product") && content.includes("category")) ||
+      content.includes("please select a product category") ||
+      content.includes("製品カテゴリ") // Japanese for product category
     ) {
       console.log("InteractiveMessage - Setting selection type to category");
       setSelectionType("category");
-    } else if (
-      content.includes("select a subcategory") ||
+    }
+    // Subcategory detection
+    else if (
+      content.includes(selectSubcategory) ||
       content.includes("subcategory") ||
-      content.includes("please select a subcategory")
+      content.includes("please select a subcategory") ||
+      content.includes("サブカテゴリ") // Japanese for subcategory
     ) {
       console.log("InteractiveMessage - Setting selection type to subcategory");
       setSelectionType("subcategory");
-    } else if (content.includes("select") && content.includes("region")) {
-      console.log("InteractiveMessage - Setting selection type to region");
-      setSelectionType("region");
-    } else if (
-      content.includes("analysis") &&
-      content.includes("global") &&
-      content.includes("region")
+    }
+    // Region detection
+    else if (
+      content.includes(selectRegion) ||
+      (content.includes("select") && content.includes("region")) ||
+      content.includes("please select a region") ||
+      content.includes("地域") // Japanese for region
     ) {
-      console.log(
-        "InteractiveMessage - Setting selection type to region (analysis)"
-      );
+      console.log("InteractiveMessage - Setting selection type to region");
       setSelectionType("region");
     } else {
       console.log("InteractiveMessage - No matching selection type found");
     }
-  }, [messageContent]);
+  }, [messageContent, t]);
 
   // Load options based on selection type
   useEffect(() => {
@@ -143,6 +157,15 @@ export function InteractiveMessage({
       }
     }
     // For multiple selection (regions), wait for user to confirm
+    // But if "All" is selected, send immediately
+    if (
+      selectionType === "region" &&
+      selected.includes(t("page.allRegionsOption"))
+    ) {
+      console.log("InteractiveMessage - Sending 'All' selection");
+      setHasSelectionBeenSent(true);
+      onSelection(t("page.allRegionsOption"));
+    }
   };
 
   const handleConfirmSelection = () => {
@@ -176,7 +199,7 @@ export function InteractiveMessage({
         placeholder={t("chipSelector.searchPlaceholder", {
           type: selectionType,
         })}
-        searchable={selectionType !== "subcategory"}
+        searchable={false}
         multiple={selectionType === "region"}
         className="max-w-full"
         disabled={hasSelectionBeenSent}

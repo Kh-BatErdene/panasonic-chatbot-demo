@@ -18,7 +18,8 @@
   "report": {
     "title": "市場分析レポート",
     "summaryTitle": "市場トレンドサマリー",
-    "noSummaryAvailable": "この分析には市場トレンドサマリーがありません。"
+    "noSummaryAvailable": "この分析には市場トレンドサマリーがありません。",
+    "webSearchLoading": "追加の洞察をウェブで検索中..."
   },
   "chipSelector": {
     "noOptionsMatch": "検索に一致するオプションがありません",
@@ -31,5 +32,39 @@
   "interactive": {
     "sending": "送信中...",
     "confirmSelection": "選択を確認"
+  },
+  "page": {
+    "initialMessage": "製品カテゴリを選択してください。",
+    "selectSubcategory": "サブカテゴリを選択してください。",
+    "selectRegion": "地域を選択してください。",
+    "analyzeMarket": "{region}の{category} - {subcategory}の市場を分析",
+    "allRegions": "全地域（{india}、{singapore}、{vietnam}）",
+    "noChartData": "チャートデータなし",
+    "completeAnalysis": "市場分析を完了してインタラクティブチャートを表示",
+    "marketAnalysisChat": "市場分析チャット",
+    "askQuestions": "市場データについて質問する",
+    "openChat": "チャットを開く",
+    "analyzing": "分析中...",
+    "chartType": "チャートタイプ:",
+    "downloadChartConfig": "チャート設定をダウンロード",
+    "zoomChart": "チャートをズーム",
+    "stackedBar": "積み上げバー",
+    "stackedBarDescription": "累積値を示す積み上げバーチャート",
+    "lineChart": "折れ線グラフ",
+    "lineChartDescription": "時系列のトレンドを示す折れ線グラフ",
+    "groupedBar": "グループ化バー",
+    "groupedBarDescription": "比較用のグループ化バーチャート",
+    "percentage": "パーセンテージ",
+    "percentageDescription": "割合を示す100%積み上げバーチャート",
+    "marketAnalysisReport": "市場分析レポート",
+    "reportStatus": "レポートステータス",
+    "analyzingMarketData": "市場データとトレンドを分析中...",
+    "completeMarketAnalysis": "詳細な洞察を表示するために市場分析を完了してください",
+    "allRegionsOption": "全て",
+    "regions": {
+      "india": "インド",
+      "singapore": "シンガポール",
+      "vietnam": "ベトナム"
+    }
   }
 }

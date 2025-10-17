@@ -336,9 +336,9 @@ class DataLoader:
             logger.write_error(f"Error preparing stacked bar chart data: {str(e)}")
             return {"error": f"Failed to prepare chart data: {str(e)}"}
 
-    def get_echarts_config(self, product_category: Optional[str] = None, title: str = "Home Appliances Market Analysis") -> Dict[str, Any]:
+    def get_echarts_config(self, product_category: Optional[str] = None, title: str = "Home Appliances Market Analysis", chart_type: str = "stacked_bar") -> Dict[str, Any]:
         """
-        Generate complete ECharts configuration for stacked bar chart
+        Generate complete ECharts configuration with enhanced styling and multiple chart types
         """
         try:
             chart_data = self.prepare_stacked_bar_chart_data(product_category)
@@ -346,18 +346,274 @@ class DataLoader:
             if "error" in chart_data:
                 return chart_data
 
-            config = {
-                "title": {"text": title, "subtext": f"Market Size by Region, {chart_data['years'][0]}-{chart_data['years'][-1]}", "left": "center"},
-                "tooltip": {"trigger": "axis", "axisPointer": {"type": "shadow"}},
-                "legend": {"data": chart_data["regions"], "bottom": "0%"},
-                "grid": {"left": "3%", "right": "4%", "bottom": "15%", "top": "15%", "containLabel": True},
-                "xAxis": {"type": "category", "data": chart_data["years"]},
-                "yAxis": {"type": "value", "name": "Market Size (US$B)", "axisLabel": {"formatter": "${value}B"}},
-                "series": chart_data["series"],
+            # Enhanced color palette
+            color_palette = [
+                "#3B82F6",  # Blue
+                "#10B981",  # Emerald
+                "#F59E0B",  # Amber
+                "#EF4444",  # Red
+                "#8B5CF6",  # Violet
+                "#06B6D4",  # Cyan
+                "#84CC16",  # Lime
+                "#F97316",  # Orange
+                "#EC4899",  # Pink
+                "#6B7280"   # Gray
+            ]
+
+            # Apply colors to series
+            enhanced_series = []
+            for i, series in enumerate(chart_data["series"]):
+                enhanced_series.append({
+                    **series,
+                    "itemStyle": {
+                        "color": color_palette[i % len(color_palette)],
+                        "borderRadius": [4, 4, 0, 0] if chart_type == "stacked_bar" else 0,
+                        "borderWidth": 0,
+                    },
+                    "emphasis": {
+                        "itemStyle": {
+                            "shadowBlur": 10,
+                            "shadowColor": "rgba(0, 0, 0, 0.2)",
+                        }
+                    },
+                    "label": {
+                        "show": False,
+                        "position": "top",
+                        "color": "#374151",
+                        "fontSize": 10,
+                    },
+                })
+
+            # Base configuration
+            base_config = {
+                "color": color_palette,
+                "title": {
+                    "text": title,
+                    "subtext": f"Market Size by Region, {chart_data['years'][0]}-{chart_data['years'][-1]}",
+                    "left": "center",
+                    "top": "20px",
+                    "textStyle": {
+                        "fontSize": 18,
+                        "fontWeight": "bold",
+                        "color": "#1F2937",
+                    },
+                    "subtextStyle": {
+                        "fontSize": 12,
+                        "color": "#6B7280",
+                    },
+                },
+                "tooltip": {
+                    "trigger": "axis",
+                    "backgroundColor": "rgba(255, 255, 255, 0.95)",
+                    "borderColor": "#D1D5DB",
+                    "borderWidth": 1,
+                    "textStyle": {
+                        "color": "#374151",
+                        "fontSize": 12,
+                    },
+                    "axisPointer": {
+                        "type": "shadow",
+                        "shadowStyle": {
+                            "color": "rgba(0, 0, 0, 0.1)",
+                            "opacity": 0.3,
+                        },
+                    },
+                },
+                "legend": {
+                    "data": [series["name"] for series in enhanced_series if series.get("name")],
+                    "bottom": "10px",
+                    "left": "center",
+                    "itemGap": 25,
+                    "show": True,
+                    "orient": "horizontal",
+                    "textStyle": {
+                        "fontSize": 12,
+                        "color": "#374151",
+                        "fontWeight": "500",
+                    },
+                    "itemWidth": 14,
+                    "itemHeight": 14,
+                    "selectedMode": True,
+                    "backgroundColor": "rgba(255, 255, 255, 0.8)",
+                    "borderColor": "#E5E7EB",
+                    "borderWidth": 1,
+                    "borderRadius": 8,
+                    "padding": [8, 12],
+                    "shadowBlur": 4,
+                    "shadowColor": "rgba(0, 0, 0, 0.1)",
+                },
+                "grid": {
+                    "left": "4%",
+                    "right": "4%",
+                    "bottom": "15%",  # Reduced to accommodate enhanced legend
+                    "top": "100px",
+                    "containLabel": True,
+                    "backgroundColor": "transparent",
+                    "borderColor": "#E5E7EB",
+                    "borderWidth": 1,
+                },
+                "xAxis": {
+                    "type": "category",
+                    "data": chart_data["years"],
+                    "nameLocation": "middle",
+                    "nameGap": 30,
+                    "nameTextStyle": {
+                        "color": "#374151",
+                        "fontSize": 12,
+                    },
+                    "axisLabel": {
+                        "color": "#6B7280",
+                        "fontSize": 11,
+                        "rotate": 0,
+                    },
+                    "axisLine": {
+                        "show": True,
+                        "lineStyle": {
+                            "color": "#D1D5DB",
+                            "width": 1,
+                        },
+                    },
+                    "axisTick": {
+                        "show": True,
+                        "alignWithLabel": True,
+                    },
+                },
+                "yAxis": {
+                    "type": "value",
+                    "name": "Market Size (US$B)",
+                    "nameLocation": "middle",
+                    "nameGap": 50,
+                    "nameTextStyle": {
+                        "color": "#374151",
+                        "fontSize": 12,
+                    },
+                    "axisLabel": {
+                        "formatter": "${value}B",
+                        "color": "#6B7280",
+                        "fontSize": 11,
+                    },
+                    "axisLine": {
+                        "show": True,
+                        "lineStyle": {
+                            "color": "#D1D5DB",
+                            "width": 1,
+                        },
+                    },
+                    "splitLine": {
+                        "show": True,
+                        "lineStyle": {
+                            "color": "#F3F4F6",
+                            "type": "dashed",
+                            "opacity": 0.5,
+                        },
+                    },
+                },
+                "series": enhanced_series,
+                "textStyle": {
+                    "color": "#374151",
+                    "fontSize": 12,
+                    "fontFamily": "'Inter', 'Segoe UI', 'Roboto', sans-serif",
+                },
+                "animation": True,
+                "animationDuration": 1000,
+                "animationEasing": "cubicOut",
             }
 
-            return {"chartConfig": config}
+            # Chart type specific configurations
+            if chart_type == "line":
+                # Convert to line chart
+                for series in base_config["series"]:
+                    series["type"] = "line"
+                    series["smooth"] = True
+                    series["symbol"] = "circle"
+                    series["symbolSize"] = 6
+                    series["lineStyle"] = {
+                        "width": 3,
+                    }
+                    series["areaStyle"] = {
+                        "opacity": 0.1,
+                    }
+                    # Remove stacking for line charts
+                    if "stack" in series:
+                        del series["stack"]
+
+            elif chart_type == "grouped_bar":
+                # Convert to grouped bar chart
+                for series in base_config["series"]:
+                    series["type"] = "bar"
+                    # Remove stacking for grouped bars
+                    if "stack" in series:
+                        del series["stack"]
+
+            elif chart_type == "percentage_stacked":
+                # Convert to 100% stacked bar chart
+                for series in base_config["series"]:
+                    series["type"] = "bar"
+                    series["stack"] = "total"
+                    # Add percentage calculation in tooltip
+                    base_config["tooltip"]["formatter"] = self._get_percentage_tooltip_formatter()
+
+            # Create optimized configuration to prevent truncation
+            optimized_config = {
+                "color": color_palette,
+                "title": {
+                    "text": title,
+                    "subtext": f"Market Size by Region, {chart_data['years'][0]}-{chart_data['years'][-1]}",
+                    "left": "center"
+                },
+                "tooltip": {
+                    "trigger": "axis",
+                    "backgroundColor": "rgba(255,255,255,0.95)"
+                },
+                "legend": {
+                    "data": chart_data["regions"],
+                    "bottom": "10px",
+                    "left": "center"
+                },
+                "grid": {
+                    "left": "4%",
+                    "right": "4%",
+                    "bottom": "20%",
+                    "top": "100px",
+                    "containLabel": True
+                },
+                "xAxis": {
+                    "type": "category",
+                    "data": chart_data["years"]
+                },
+                "yAxis": {
+                    "type": "value",
+                    "name": "Market Size (US$B)",
+                    "axisLabel": {"formatter": "${value}B"}
+                },
+                "series": enhanced_series
+            }
+
+            return {"chartConfig": optimized_config}
 
         except Exception as e:
             logger.write_error(f"Error generating ECharts config: {str(e)}")
             return {"error": f"Failed to generate chart config: {str(e)}"}
+
+    def _get_percentage_tooltip_formatter(self) -> str:
+        """
+        Generate tooltip formatter for percentage stacked charts
+        """
+        return """
+        function(params) {
+            let total = 0;
+            let result = params[0].name + '<br/>';
+            
+            params.forEach(function(item) {
+                total += item.value;
+            });
+            
+            params.forEach(function(item) {
+                const percentage = ((item.value / total) * 100).toFixed(1);
+                result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:' + item.color + ';"></span>';
+                result += item.seriesName + ': ' + item.value + ' (' + percentage + '%)<br/>';
+            });
+            
+            return result;
+        }
+        """
